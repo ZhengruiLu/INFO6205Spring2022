@@ -2,6 +2,5 @@
 
 INFO6205Spring2022
 
-Adding more test
-
-Adding text for pulling
+lesson 1 search and sort
+lesson 2 search and sort continue
