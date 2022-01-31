@@ -12,10 +12,7 @@
 
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args){
@@ -47,7 +44,16 @@ public class Main {
         System.out.println(customSortString(order, str));//Output: "cbad"
         String order2 = "cbafg", str2 = "abcd";
         System.out.println(customSortString(order2, str2));//Output: "cbad"
-
+        //q8
+        int[] pancakeArr = {3,2,4,1};
+        System.out.println(pancakeSort(pancakeArr).toString());
+        //q9
+        int[] nums3 = {1,1,2,2,2,3};
+        System.out.println(Arrays.toString(frequencySort(nums3)));
+        //q10
+        String[] words = {"the","day","is","sunny","the","the","the","sunny","is","is"};
+        int k2 = 4;
+        System.out.println(topKFrequent(words, k2).toString());
 
     }
 
@@ -290,5 +296,125 @@ public class Main {
         }
 
         return sb.toString();
+    }
+
+    //969. Pancake Sorting
+    //time: O(n^2)
+    //space: O(n)
+    public static List<Integer> pancakeSort(int[] A) {
+        /*
+        Input: arr = [3,2,4,1]
+        Output: [4,2,4,3]
+         */
+
+        List<Integer> res = new ArrayList<>();
+        if (A.length < 2){
+            return res;
+        }
+
+        int len = A.length, largest = len;
+
+        for (int i = 0; i < A.length; i++){
+            //1.find the corresponding largest element's index in A
+            int idx = find(A, largest);
+            //2.flip 0 - index part, let the largest element move to 1st one in arr
+            filp(A, 0, idx);
+            //3.filp 0 - nth largest part, let the largest element move to the end in arr
+            filp(A, 0, largest - 1);
+            res.add(idx + 1); //why add idx + 1, what it refer to?
+            res.add(largest);
+            largest--;
+        }
+
+        return res;
+    }
+
+    private static int find(int[] arr, int target){
+        for (int i = 0; i < arr.length; i++){
+            if (arr[i] == target){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void filp(int[] arr, int start, int end){
+        if (start == end){
+            return;
+        }
+
+        int i = 0, j = end;
+        while (i < j){
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
+    }
+
+    //1636. Sort Array by Increasing Frequency
+    //time: nlogn
+    //space: n
+    public static int[] frequencySort(int[] nums) {
+        //1.cal freq
+        //n
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int num: nums){
+            int freq = map.getOrDefault(num, 0) + 1;
+            map.put(num, freq);
+        }
+
+        //n
+        PriorityQueue<Integer> que = new PriorityQueue<>((a, b) -> map.get(a) != map.get(b) ? map.get(a) - map.get(b) : b - a);
+        for (int num: nums){
+            que.offer(num);
+        }
+
+        //nlogn
+        int index = 0;
+        while (!que.isEmpty()){
+            nums[index++] = que.poll();
+        }
+
+        return nums;
+    }
+
+    //692. Top K Frequent Words
+    //time: O(n + logn)
+    //space O(logn + k)
+    public static List<String> topKFrequent(String[] words, int k) {
+        //1.map cal each unique string's count num - O(n)
+        HashMap<String, Integer> map = new HashMap<>();
+        for (String word: words){
+            int freq = map.getOrDefault(word, 0) + 1;
+            map.put(word, freq);
+        }
+
+        //2.PriorityQueue sort - (logn)
+        PriorityQueue<String> que = new PriorityQueue<>(new Comparator<String>() {
+            public int compare(String a, String b){
+                if (map.get(a) != map.get(b)){
+                    return map.get(a) - map.get(b);
+                }else{
+                    return b.compareTo(a);
+                }
+            }
+        });
+
+        for (String word: map.keySet()){
+            que.offer(word);
+            if (que.size() > k){
+                que.poll();
+            }
+        }
+
+        //3.pop - O(logn)
+        List<String> list = new ArrayList<>();
+        while (!que.isEmpty()){
+            list.add(0, que.poll());
+        }
+
+        return list;
     }
 }
