@@ -84,7 +84,7 @@ public class Main {
             if (this.map2.containsKey(node)){
                 return this.map2.get(node);
             }else{
-                this.map2.put(node, new Node(node.val, null, null));
+                this.map2.put(node, new Node(node.val));
                 return this.map2.get(node);
             }
 
