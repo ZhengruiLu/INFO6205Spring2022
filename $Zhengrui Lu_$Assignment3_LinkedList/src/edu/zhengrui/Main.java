@@ -9,6 +9,8 @@ public class Main {
         ListNode l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
         ListNode res = addTwoNumber(l1, l2);
         res.printAll();
+
+        //q2: how to print result like leetcode?
     }
 
     //helpers
@@ -110,11 +112,56 @@ public class Main {
             old = old.next;
             newNode = newNode.next;
         }
-
         return this.map2.get(head);
-
     }
     
+    /*
+    138. Copy List with Random Pointer
+    solution3: iterative with O(1) space
+    time: O(n), space: O(1)
+     */
+    public Node copyRandomList3(Node head){
+        //corner case
+        if (head == null){
+            return null;
+        }
+        //link copy node after ori node
+        Node ptr = head;
+        while (ptr != null){
+            Node copy = new Node(ptr.val);
+            copy.next = ptr.next;
+            ptr.next = copy;
+
+            //move pointer to next ori node
+            ptr = ptr.next.next;
+        }
+
+        //add random
+        ptr = head;
+        while (ptr != null){
+            ptr.next.random = (ptr.random != null) ? ptr.random.next : null;
+            //move poiner
+            ptr = ptr.next.next;
+        }
+
+        //unlink all and relink again
+        ptr = head;
+        Node ptrNew = head.next;
+        Node newHeadRecord = head.next;
+        while (ptr != null){
+            ptr.next = ptr.next.next;
+            ptrNew.next = (ptrNew.next != null) ? ptrNew.next.next : null;
+
+            //move pointers
+            //move old list pointer
+            ptr = ptr.next;
+            //move new list pointer
+            ptrNew = ptrNew.next;
+        }
+
+        return newHeadRecord;
+    }
+
 
 
 }
