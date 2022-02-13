@@ -1,6 +1,8 @@
 package edu.zhengrui;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class Main {
     public static void main(String[] args){
@@ -162,6 +164,142 @@ public class Main {
         return newHeadRecord;
     }
 
+    /*
+    23. Merge k Sorted Lists
+    PriorityQueue
+    time:O(logk * n * k), space: O(k)
+    */
+    public static ListNode mergeKLists(ListNode[] lists) {
+        //use PriorityQueue to sort nodes' val from small to large
+        Comparator<ListNode> compareVal = (a, b) -> Integer.compare(a.val, b.val);
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(compareVal);
 
+        //add each LinkedList head to pq
+        for (ListNode node: lists){
+            if (node != null){
+                pq.offer(node);
+            }
+        }
+
+        //keep pop the smallest one and link it to res
+        ListNode head = new ListNode();
+        ListNode tail = head;
+
+        while (!pq.isEmpty()){
+            ListNode curr = pq.poll();
+            tail.next = curr;
+            tail = tail.next;
+
+            //keep put next node into pq
+            if (curr.next != null){
+                pq.offer(curr.next);
+            }
+        }
+
+        return head.next;
+    }
+
+    /**
+     143. Reorder List
+     time: O(n), space: O(1)
+     */
+    public void reorderList(ListNode head) {
+        if (head == null){
+            return;
+        }
+
+        //find mid node and divide ori into start to mid, mid + 1 to end
+        ListNode mid = findMiddle(head);
+        ListNode l1 = head;
+        ListNode l2 = mid.next;
+        mid.next = null;
+
+        //reverse the second part
+        l2 = reverseList(l2);//O(n/2)
+
+        //merge l1 and reverse l2 in required order
+        mergeList(l1, l2);//O(n)
+    }
+
+    private ListNode findMiddle(ListNode head){
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast.next != null && fast.next.next != null){ //O(n/2)
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return slow;
+    }
+
+    /*
+    1 > 2 > 3 > null
+    null<1<2<3
+             p c n
+    */
+    private ListNode reverseList(ListNode head){
+        ListNode pre = null;
+        ListNode curr = head;
+        ListNode nextTemp = new ListNode();
+
+        while (curr != null){
+            nextTemp = curr.next;
+
+            curr.next = pre;
+            pre = curr;
+            curr = nextTemp;
+        }
+
+        return pre;
+    }
+
+    private void mergeList(ListNode l1, ListNode l2){
+        ListNode p1 = l1, p2 = l2;
+
+        while (l1 != null && l2 != null){
+            p1 = l1.next;
+            p2 = l2.next;
+
+            l1.next = l2;
+            l1 = p1;
+
+            l2.next = l1;
+            l2 = p2;
+        }
+    }
+
+    /*
+    234. Palindrome Linked List
+    time: O(n), space: O(1)
+    */
+    public boolean isPalindrome(ListNode head) {
+        //find middle and divide list into start to mid, mid + 1 to end
+        ListNode l1 = head;
+        ListNode mid = findMiddle(head);//O(n/2)
+        ListNode l2 = mid.next;
+
+        //reverse second part
+        l2 = reverseList(l2);//O(n/2)
+
+        //check l1 and reversed l2, if the first n or n-1 nodes' vals are same
+        ListNode ptr2 = l2;
+        boolean valIsSame = true;
+
+        while (valIsSame && ptr2 != null){//O(n/2)
+            if (l1.val != ptr2.val){
+                valIsSame = false;
+            }
+
+            l1 = l1.next;
+            ptr2 = ptr2.next;
+        }
+
+        //rebuild the ori list
+        mid.next = reverseList(l2);//O(n/2)
+
+
+        return valIsSame;
+    }
 
 }
