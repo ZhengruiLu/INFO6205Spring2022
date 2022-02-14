@@ -1,8 +1,6 @@
 package edu.zhengrui;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args){
@@ -10,9 +8,50 @@ public class Main {
         ListNode l1 = new ListNode(2, new ListNode(4, new ListNode(3)));
         ListNode l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
         ListNode res = addTwoNumber(l1, l2);
-        res.printAll();
+        res.printList();
 
-        //q2: how to print result like leetcode?
+        //q2: how to print result like leetcode, including its random idx?
+
+        //q3: Merge k Sorted Lists
+        ListNode ele1 = new ListNode(1, new ListNode(4, new ListNode(5)));
+        ListNode ele2 = new ListNode(1, new ListNode(3, new ListNode(4)));
+        ListNode ele3 = new ListNode(2, new ListNode(6));
+        ArrayList<ListNode> arr = new ArrayList<>();
+        arr.add(ele1);
+        arr.add(ele2);
+        arr.add(ele3);
+        mergeKLists(arr).printList();
+
+//        q4: Reorder List
+        ListNode l4 = new ListNode(1, new ListNode(2, new ListNode(3)));
+        reorderList(l4);
+        l4.printList();
+
+//        q5: Palindrome Linked List
+        ListNode l5 = new ListNode(1, new ListNode(2, new ListNode(1)));
+        boolean res5 = isPalindrome(l5);
+        System.out.println(res5);
+
+//        q6: Remove Nth Node From End of List
+        ListNode l6 = new ListNode(1, new ListNode(2, new ListNode(3)));
+        int n = 2;
+        removeNthFromEnd(l6, 2).printList();
+
+//        q7: Odd Even Linked List
+        ListNode l7 = new ListNode(1, new ListNode(2, new ListNode(3)));
+        oddEvenList(l7).printList();
+
+//        q8: Insert into a Sorted Circular Linked List
+        //how to print circular linked list?
+
+//        q9: Next Greater Node In Linked List
+        ListNode l9 = new ListNode(2, new ListNode(1, new ListNode(5)));
+        int[] arr9 = nextLargerNodes(l9);
+        System.out.println(Arrays.toString(arr9));
+
+//        q10: Remove Duplicates from Sorted List II
+        ListNode l10 = new ListNode(1, new ListNode(1, new ListNode(2)));
+        deleteDuplicates(l10).printList();
     }
 
     //helpers
@@ -169,7 +208,7 @@ public class Main {
     PriorityQueue
     time:O(logk * n * k), space: O(k)
     */
-    public static ListNode mergeKLists(ListNode[] lists) {
+    public static ListNode mergeKLists(ArrayList<ListNode> lists) {
         //use PriorityQueue to sort nodes' val from small to large
         Comparator<ListNode> compareVal = (a, b) -> Integer.compare(a.val, b.val);
         PriorityQueue<ListNode> pq = new PriorityQueue<>(compareVal);
@@ -203,7 +242,7 @@ public class Main {
      143. Reorder List
      time: O(n), space: O(1)
      */
-    public void reorderList(ListNode head) {
+    public static void reorderList(ListNode head) {
         if (head == null){
             return;
         }
@@ -221,7 +260,7 @@ public class Main {
         mergeList(l1, l2);//O(n)
     }
 
-    private ListNode findMiddle(ListNode head){
+    private static ListNode findMiddle(ListNode head){
         ListNode slow = head;
         ListNode fast = head;
 
@@ -238,7 +277,7 @@ public class Main {
     null<1<2<3
              p c n
     */
-    private ListNode reverseList(ListNode head){
+    private static ListNode reverseList(ListNode head){
         ListNode pre = null;
         ListNode curr = head;
         ListNode nextTemp = new ListNode();
@@ -254,7 +293,7 @@ public class Main {
         return pre;
     }
 
-    private void mergeList(ListNode l1, ListNode l2){
+    private static void mergeList(ListNode l1, ListNode l2){
         ListNode p1 = l1, p2 = l2;
 
         while (l1 != null && l2 != null){
@@ -273,7 +312,7 @@ public class Main {
     234. Palindrome Linked List
     time: O(n), space: O(1)
     */
-    public boolean isPalindrome(ListNode head) {
+    public static boolean isPalindrome(ListNode head) {
         //find middle and divide list into start to mid, mid + 1 to end
         ListNode l1 = head;
         ListNode mid = findMiddle(head);//O(n/2)
@@ -300,6 +339,160 @@ public class Main {
 
 
         return valIsSame;
+    }
+
+    /*
+    19. Remove Nth Node From End of List
+    time: O(L), L refer to the length of list, space: O(1)
+    */
+    public static ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+
+        ListNode ptr = dummy;
+        //move ptr n times, keep ptr and resPtr n range
+        for (int i = 0; i <= n; i++){//O(n)
+            ptr = ptr.next;
+        }
+
+        //move resPtr to correct position
+        ListNode resPtr = dummy;
+        while (ptr != null){//O(L - n)
+            resPtr = resPtr.next;
+            ptr = ptr.next;
+        }
+
+        resPtr.next = resPtr.next.next;
+
+        return dummy.next;
+    }
+
+    /*
+    328. Odd Even Linked List
+    time: O(n), space: O(1)
+    */
+    public static ListNode oddEvenList(ListNode head) {
+        if (head == null){
+            return null;
+        }
+
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+
+        ListNode oddPtr = dummy.next;
+        ListNode evenStart = dummy.next.next;
+        ListNode evenPtr = evenStart;
+
+        //find odd part end, link odd idx ele
+        while (evenPtr != null && evenPtr.next != null){//why use even and even.next as condition, instead of considering odd
+            oddPtr.next = evenPtr.next;
+            oddPtr = oddPtr.next;
+            evenPtr.next = oddPtr.next;
+            evenPtr = evenPtr.next;
+        }
+
+        //link odd part and even part
+        oddPtr.next = evenStart;
+
+        return dummy.next;
+    }
+
+    /*
+    708. Insert into a Sorted Circular Linked List
+    two pointers interation; do while
+    time: O(n), space: O(1)
+    */
+    public static ListNode insert(ListNode head, int insertVal) {
+        if (head == null){
+            ListNode insertNode = new ListNode(insertVal, null);
+            insertNode.next = insertNode;
+            return insertNode;
+        }
+
+        ListNode pre = head, curr = head.next;
+        Boolean insertMid = false;
+
+        do{
+            //case 1 pre.val <= insertVal <= curr.val
+            if (pre.val <= insertVal && insertVal <= curr.val){
+                insertMid = true;
+            }
+            //case 2 insertVal beyond the range of pre val and curr val
+            if (pre.val > curr.val){
+                if (insertVal >= pre.val || insertVal <= curr.val)
+                    insertMid = true;
+            }
+
+            //if insertMid is ture, we insert middle position
+            if (insertMid){
+                pre.next = new ListNode(insertVal, curr);
+                return head;
+            }
+
+            //move ptr
+            pre = curr;
+            curr = curr.next;
+        }
+        while (pre != head);
+
+        //case 3 the list contains uniform values
+        pre.next = new ListNode(insertVal, curr);
+        return head;
+    }
+
+    /*
+    1019. Next Greater Node In Linked List
+    stack
+    time: O(n), space: O(n)
+    */
+    public static int[] nextLargerNodes(ListNode head) {
+        //use arraylist to store all vals
+        List<Integer> vals = new ArrayList<>();//O(n)
+        ListNode ptr = head;
+
+        while (ptr != null){
+            vals.add(ptr.val);
+            ptr = ptr.next;
+        }
+
+        //use stack
+        Stack<Integer> stack = new Stack<>();//O(n)
+        int[] res = new int[vals.size()];
+
+        for (int i = 0; i < vals.size(); i++){
+            while (!stack.isEmpty() && vals.get(stack.peek()) < vals.get(i)){
+                res[stack.pop()] = vals.get(i);
+            }
+
+            stack.push(i);
+        }
+
+        return res;
+    }
+
+    /*
+    82. Remove Duplicates from Sorted List II
+    sentinel
+    Time: O(n), Space: O(1)
+    */
+    public static ListNode deleteDuplicates(ListNode head) {
+        ListNode sentinel = new ListNode(0, head);
+        ListNode pre = sentinel;
+
+        while (head != null){
+            if (head.next != null && head.val == head.next.val){
+                while (head.next != null && head.val == head.next.val){
+                    head = head.next;
+                }
+                pre.next = head.next;
+            }
+            else{
+                pre = pre.next;
+            }
+            head = head.next;
+        }
+
+        return sentinel.next;
     }
 
 }

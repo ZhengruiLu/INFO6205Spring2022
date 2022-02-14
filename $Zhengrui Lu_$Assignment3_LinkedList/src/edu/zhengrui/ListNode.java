@@ -13,10 +13,17 @@ public class ListNode {
         this.next = next;
     }
 
-    public void printAll(){
-        System.out.print(this.val);
-        if (this.next != null){
-            this.next.printAll();
+
+    public void printList(){
+        ListNode temp = this;
+
+        System.out.print("[ ");
+        while(temp != null){
+            System.out.print(temp.val + " -> ");
+            temp = temp.next;
         }
+        System.out.println("Null ]");
+
     }
+
 }
