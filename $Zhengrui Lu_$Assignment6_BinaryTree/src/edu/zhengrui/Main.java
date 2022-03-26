@@ -8,6 +8,9 @@ public class Main {
     prefix, recursion
     O(n), O(n)
     */
+    public static void main(String[] args) {
+        System.out.println(7/10);
+    }
     public int pathSum(TreeNode root, int targetSum) {
         HashMap<Long, Integer> prefix = new HashMap<>();
         prefix.put(0L, 1);
