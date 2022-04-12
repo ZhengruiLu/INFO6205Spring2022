@@ -4,27 +4,46 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        //Q1
-        int[] nums = {0,1,3,50,75};
-        int lower = 0, upper = 99;
-        List<String> ans1 = rangesList(nums, lower, upper);
-        System.out.println(ans1.toString());
+        int ans = fibonacci(0, 1, 5);
+        System.out.println(ans);
 
-        //Q2
-        ListNode l1 = new ListNode(2, new ListNode(4, new ListNode(3)));
-        ListNode l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
-        ListNode ans = addTwoNumbers(l1, l2);
-        ans.printList();
 
-        //Q3: sorry, forgot how to print tree
+//        //Q1
+//        int[] nums = {0,1,3,50,75};
+//        int lower = 0, upper = 99;
+//        List<String> ans1 = rangesList(nums, lower, upper);
+//        System.out.println(ans1.toString());
+//
+//        //Q2
+//        ListNode l1 = new ListNode(2, new ListNode(4, new ListNode(3)));
+//        ListNode l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
+//        ListNode ans = addTwoNumbers(l1, l2);
+//        ans.printList();
+//
+//        //Q3: sorry, forgot how to print tree
+//
+//        //Q4
+//        int[][] intervals = {{1,3}, {2,6}, {8,10}, {15,18}};
+//        int[][] ans4 = mergeIntervals(intervals);
+//        for (int[] interval: ans4){
+//            System.out.print(Arrays.toString(interval));
+//        }
 
-        //Q4
-        int[][] intervals = {{1,3}, {2,6}, {8,10}, {15,18}};
-        int[][] ans4 = mergeIntervals(intervals);
-        for (int[] interval: ans4){
-            System.out.print(Arrays.toString(interval));
+    }
+
+    private static int fibonacci(int first, int second, int n) {
+        if (n <= 0) {
+            return 0;
         }
-
+        if (n < 3) {
+            return 1;
+        }
+        else if (n == 3) {
+            return first + second;
+        }
+        else {
+            return fibonacci(second, first + second, n - 1);
+        }
     }
 
     /*
